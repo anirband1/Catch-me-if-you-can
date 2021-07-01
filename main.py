@@ -4,9 +4,9 @@ import time
 import socket
 
 # c# communication requirements
-host, port = "127.0.0.1", 9999
+host, port = "localhost", 9999
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(("192.168.1.28", port))
+sock.connect((host, port))
 
 # hand detection
 cap = cv.VideoCapture(0)
@@ -18,6 +18,8 @@ hands = mp_hands.Hands(static_image_mode=False,
                        max_num_hands=2,
                        min_detection_confidence=0.75,
                        min_tracking_confidence=0.75)
+
+sPosVector = "0,0,0"
 
 while True:
     success, frame = cap.read()
@@ -45,7 +47,7 @@ while True:
                 if id == 8:
 
                     cv.circle(frame, (cx, cy), 25, (255, 0, 255), -1)
-                    sPosVector = f"{cx}, {cy}"  # position of index finger (updates in real time)
+                    sPosVector = f"{cx},{cy},0"  # position of index finger (updates in real time)
 
                     sock.sendall(
                         sPosVector.encode("UTF-8")

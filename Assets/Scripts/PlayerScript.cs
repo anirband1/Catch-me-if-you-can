@@ -12,7 +12,7 @@ public class PlayerScript : MonoBehaviour
 {
 
     Thread mThread;
-    public string connectionIP = "192.168.1.28";
+    public string connectionIP = "localhost";
     int connectionPort = 9999;
     IPAddress localAdd;
     TcpListener listener;
@@ -22,7 +22,9 @@ public class PlayerScript : MonoBehaviour
 
     void Start()
     {
-
+        ThreadStart ts = new ThreadStart(GetInfo);
+        mThread = new Thread(ts);
+        mThread.Start();
     }
 
     // Update is called once per frame
