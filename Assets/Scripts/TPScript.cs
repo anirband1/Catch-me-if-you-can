@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TPScript : MonoBehaviour
 {
+    // Game related declarations
     [SerializeField] Camera mainCamera;
     Vector2 playerBounds;
     Vector2 boxPos;
@@ -14,12 +15,22 @@ public class TPScript : MonoBehaviour
 
     float minX, minY, maxX, maxY;
 
+
+
     void Start()
     {
-        objectWidth = GetComponent<SpriteRenderer>().bounds.size.x;
-        objectHeight = GetComponent<SpriteRenderer>().bounds.size.y;
-        playerBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width - objectWidth / 2, Screen.height - objectHeight / 2, 0));
+        objectWidth = GetComponent<SpriteRenderer>().size.x;
+        objectHeight = GetComponent<SpriteRenderer>().size.y;
+
+        Debug.Log(objectWidth.ToString());
+
+        playerBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
         timeBeforeChange = Random.Range(0.5f, 2f);
+
+        minX = -(playerBounds.x - objectWidth);
+        maxX = playerBounds.x - objectWidth;
+        minY = -(playerBounds.y - objectHeight);
+        maxY = playerBounds.y - objectHeight;
 
         ShiftPos();
     }
@@ -38,11 +49,6 @@ public class TPScript : MonoBehaviour
 
     void ShiftPos()
     {
-        minX = -playerBounds.x;
-        maxX = playerBounds.x;
-        minY = -playerBounds.y;
-        maxY = playerBounds.y;
-
         boxPos = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
 
         transform.position = boxPos;

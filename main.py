@@ -4,9 +4,9 @@ import time
 import socket
 
 # c# communication requirements
-host, port = "185.116.156.173", 9999
+host, port = "127.0.0.1", 9999
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((socket.gethostname(), port))
+sock.connect(("192.168.1.28", port))
 
 # hand detection
 cap = cv.VideoCapture(0)
