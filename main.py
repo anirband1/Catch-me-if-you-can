@@ -22,6 +22,9 @@ hands = mp_hands.Hands(static_image_mode=False,
 sPosVector = "0,0,0"
 
 while True:
+
+    time.sleep(0.0166)
+
     success, frame = cap.read()
     frame = cv.flip(frame, 1)
     rectangle = cv.rectangle(frame, (30, 30), (100, 100), (0, 255, 0),
@@ -56,8 +59,6 @@ while True:
                         "UTF-8"
                     )  #receiveing data in Byte fron C#, and converting it to String
                     # print(receivedData)
-
-                    # time.sleep(0.0166)  # delta time
 
             mpDraw.draw_landmarks(frame, handLM, mp_hands.HAND_CONNECTIONS)
 
