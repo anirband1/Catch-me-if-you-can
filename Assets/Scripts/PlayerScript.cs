@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -18,19 +16,37 @@ public class PlayerScript : MonoBehaviour
     TcpListener listener;
     TcpClient client;
     Vector3 receivedPos = Vector3.zero;
+    Vector2 playerBounds;
+    [SerializeField] Camera mainCamera;
     bool running;
+    float[] fArray;
+    float objectWidth, objectHeight, maxX, maxY;
 
     void Start()
     {
+        objectWidth = GetComponent<SpriteRenderer>().size.x;
+        objectHeight = GetComponent<SpriteRenderer>().size.y;
+
+        playerBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+
+        maxX = playerBounds.x - objectWidth;
+        maxY = playerBounds.y - objectHeight;
+
         ThreadStart ts = new ThreadStart(GetInfo);
         mThread = new Thread(ts);
         mThread.Start();
     }
-
     // Update is called once per frame
+
     void Update()
     {
         transform.position = receivedPos;
+    }
+
+    // Might cause issues for multiple players
+    void OnDestroy()
+    {
+        running = false;
     }
 
     void GetInfo()
@@ -61,8 +77,8 @@ public class PlayerScript : MonoBehaviour
         if (dataReceived != null)
         {
             //---Using received data---
-            receivedPos = StringToVector3(dataReceived); //<-- assigning receivedPos value from Python
-            Debug.Log("received pos data, and moved the Cube!");
+            fArray = StringToFloatArray(dataReceived); //<-- assigning receivedPos value from Python
+            receivedPos = new Vector3(maxX * fArray[0], -(maxY * fArray[1])); // Default values are inverted for y axis
 
             //---Sending Data to Host----               >  IMPORTANT  <
             // byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
@@ -70,8 +86,9 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    public static Vector3 StringToVector3(string sVector)
+    public static float[] StringToFloatArray(string sVector)
     {
+        float[] result;
         // Remove the parentheses
         if (sVector.StartsWith("(") && sVector.EndsWith(")"))
         {
@@ -81,12 +98,18 @@ public class PlayerScript : MonoBehaviour
         // split the items
         string[] sArray = sVector.Split(',');
 
-        // store as a Vector3
-        Vector3 result = new Vector3(
-            float.Parse(sArray[0]),
-            float.Parse(sArray[1]),
-            float.Parse(sArray[2]));
+        // store as a Float array
+        if (sVector != null)
+        {
+            result = new float[]
+            {
+                float.Parse(sArray[0]),
+                float.Parse(sArray[1]),
+                float.Parse(sArray[2])
+            };
+            return result;
+        }
 
-        return result;
+        return new float[] { 0, 0, 0 };
     }
 }
