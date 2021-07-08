@@ -19,6 +19,7 @@ public class PlayerScript : MonoBehaviour
     Vector2 playerBounds;
     [SerializeField] Camera mainCamera;
     bool running;
+    bool quitApp = false;
     float[] fArray;
     float objectWidth, objectHeight, maxX, maxY;
 
@@ -41,6 +42,13 @@ public class PlayerScript : MonoBehaviour
     void Update()
     {
         transform.position = receivedPos;
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            quitApp = true;
+
+            // Redo this if python is not quitting after building
+            Application.Quit();
+        }
     }
 
     // Might cause issues for multiple players
@@ -69,6 +77,7 @@ public class PlayerScript : MonoBehaviour
     {
         NetworkStream nwStream = client.GetStream();
         byte[] buffer = new byte[client.ReceiveBufferSize];
+        byte[] myWriteBuffer;
 
         //---receiving Data from the Host----
         int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize); //Getting data in Bytes from Python
@@ -80,22 +89,29 @@ public class PlayerScript : MonoBehaviour
             fArray = StringToFloatArray(dataReceived); //<-- assigning receivedPos value from Python
             receivedPos = new Vector3(maxX * fArray[0], -(maxY * fArray[1])); // Default values are inverted for y axis
 
-            //---Sending Data to Host----               >  IMPORTANT  <
-            // byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
-            // nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
+
+            //---Sending Data to Host----
+            if (quitApp)
+            {
+                myWriteBuffer = Encoding.ASCII.GetBytes("Stop");
+                nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
+            }
+
+            myWriteBuffer = Encoding.ASCII.GetBytes("Run");
+            nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
         }
     }
 
     public static float[] StringToFloatArray(string sVector)
     {
         float[] result;
+
         // Remove the parentheses
         if (sVector.StartsWith("(") && sVector.EndsWith(")"))
         {
             sVector = sVector.Substring(1, sVector.Length - 2);
         }
 
-        // split the items
         string[] sArray = sVector.Split(',');
 
         // store as a Float array
