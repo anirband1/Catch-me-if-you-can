@@ -18,8 +18,7 @@ public class PlayerScript : MonoBehaviour
     Vector3 receivedPos = Vector3.zero;
     Vector2 playerBounds;
     [SerializeField] Camera mainCamera;
-    bool running;
-    bool quitApp = false;
+    bool running, quitApp = false;
     float[] fArray;
     float objectWidth, objectHeight, maxX, maxY;
 
@@ -37,16 +36,16 @@ public class PlayerScript : MonoBehaviour
         mThread = new Thread(ts);
         mThread.Start();
     }
-    // Update is called once per frame
 
     void Update()
     {
         transform.position = receivedPos;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             quitApp = true;
 
-            // Redo this if python is not quitting after building
+            // Redo this if python does not quit after building
             Application.Quit();
         }
     }
