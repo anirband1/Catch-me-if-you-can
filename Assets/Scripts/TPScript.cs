@@ -2,7 +2,6 @@
 
 public class TPScript : MonoBehaviour
 {
-    // Game related declarations
     [SerializeField] Camera mainCamera;
     Vector2 playerBounds, boxPos;
     [SerializeField] GameObject player;
@@ -62,16 +61,6 @@ public class TPScript : MonoBehaviour
     {
         boxPos = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
 
-        // if ((new Vector2(player.transform.position.x, player.transform.position.y) - boxPos).sqrMagnitude <= 1.1 * 1.1) // Change magic numbers
-        // {
-        //     ShiftPos();
-        // }
-
-        // if (Physics.CheckBox(boxPos, new Vector3(objectWidth / 2, objectHeight / 2, 0.01f), Quaternion.identity))
-        // {
-        //     Debug.Log("Recursive");
-        //     ShiftPos();
-        // }
         if (Physics2D.OverlapBox(boxPos, new Vector2(1, 1), 0) != null)
         {
             Debug.Log("Recursive");
@@ -81,9 +70,7 @@ public class TPScript : MonoBehaviour
         transform.position = boxPos;
 
 
-        timeBeforeChange = Random.Range(0.5f, 0.6f); // Max is 2f
+        timeBeforeChange = Random.Range(0.5f, 2f);
 
-        // Physics.SphereCast
-        // Physics.CheckSphere
     }
 }
