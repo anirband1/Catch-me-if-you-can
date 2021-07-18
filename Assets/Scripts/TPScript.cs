@@ -2,8 +2,9 @@
 
 public class TPScript : MonoBehaviour
 {
-    [SerializeField] Camera mainCamera;
-    Vector2 playerBounds, boxPos;
+
+    Vector2 boxPos;
+    Vector2 playerBounds;
     [SerializeField] GameObject player;
 
     float timer, timeBeforeChange;
@@ -25,8 +26,10 @@ public class TPScript : MonoBehaviour
         playerWidth = player.GetComponent<SpriteRenderer>().size.x;
         playerWidth = player.GetComponent<SpriteRenderer>().size.y;
 
-        playerBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
         timeBeforeChange = Random.Range(0.5f, 2f);
+
+        playerBounds = FindObjectOfType<GameManager>().screenBounds;
+        Debug.Log(playerBounds);
 
         minX = -(playerBounds.x - objectWidth);
         maxX = playerBounds.x - objectWidth;
