@@ -1,17 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TPScript : MonoBehaviour
 {
-    // Game related declarations
-    [SerializeField] Camera mainCamera;
-    Vector2 playerBounds;
+
     Vector2 boxPos;
+    Vector2 playerBounds;
+    [SerializeField] GameObject player;
 
     float timer, timeBeforeChange;
 
-    float objectWidth, objectHeight;
+    float objectWidth, objectHeight, playerWidth, playerHeight;
 
     float minX, minY, maxX, maxY;
 
@@ -19,13 +17,18 @@ public class TPScript : MonoBehaviour
 
     void Start()
     {
+
+        // Shift screen bounds code to GameManager
+
         objectWidth = GetComponent<SpriteRenderer>().size.x;
         objectHeight = GetComponent<SpriteRenderer>().size.y;
 
-        Debug.Log(objectWidth.ToString());
+        playerWidth = player.GetComponent<SpriteRenderer>().size.x;
+        playerWidth = player.GetComponent<SpriteRenderer>().size.y;
 
-        playerBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
         timeBeforeChange = Random.Range(0.5f, 2f);
+
+        playerBounds = FindObjectOfType<GameManager>().screenBounds;
 
         minX = -(playerBounds.x - objectWidth);
         maxX = playerBounds.x - objectWidth;
@@ -47,9 +50,26 @@ public class TPScript : MonoBehaviour
         timer += Time.deltaTime;
     }
 
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Debug.Log("enemy collision");
+        }
+    }
+
     void ShiftPos()
     {
         boxPos = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
+
+        if (Physics2D.OverlapBox(boxPos, new Vector2(1, 1), 0) != null)
+        {
+            ShiftPos();
+        }
 
         transform.position = boxPos;
 

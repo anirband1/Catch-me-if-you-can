@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -12,23 +10,50 @@ public class PlayerScript : MonoBehaviour
 {
 
     Thread mThread;
-    public string connectionIP = "192.168.1.28";
+    public string connectionIP = "localhost";
     int connectionPort = 9999;
     IPAddress localAdd;
     TcpListener listener;
     TcpClient client;
     Vector3 receivedPos = Vector3.zero;
-    bool running;
+    Vector2 playerBounds;
+    [SerializeField] Camera mainCamera;
+    bool running, quitApp = false;
+    float[] fArray;
+    float objectWidth, objectHeight, maxX, maxY;
 
     void Start()
     {
+        objectWidth = GetComponent<SpriteRenderer>().size.x;
+        objectHeight = GetComponent<SpriteRenderer>().size.y;
 
+        playerBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+
+        maxX = playerBounds.x - objectWidth;
+        maxY = playerBounds.y - objectHeight;
+
+        ThreadStart ts = new ThreadStart(GetInfo);
+        mThread = new Thread(ts);
+        mThread.Start();
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.position = receivedPos;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            quitApp = true;
+
+            // Redo this if python does not quit after building
+            Application.Quit();
+        }
+    }
+
+    // Might cause issues for multiple players
+    void OnDestroy()
+    {
+        running = false;
     }
 
     void GetInfo()
@@ -51,40 +76,57 @@ public class PlayerScript : MonoBehaviour
     {
         NetworkStream nwStream = client.GetStream();
         byte[] buffer = new byte[client.ReceiveBufferSize];
+        byte[] myWriteBuffer;
+        // string dataReceived = null;
 
         //---receiving Data from the Host----
         int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize); //Getting data in Bytes from Python
         string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead); //Converting byte data to string
 
+
         if (dataReceived != null)
         {
             //---Using received data---
-            receivedPos = StringToVector3(dataReceived); //<-- assigning receivedPos value from Python
-            Debug.Log("received pos data, and moved the Cube!");
+            fArray = StringToFloatArray(dataReceived); //<-- assigning receivedPos value from Python
+            receivedPos = new Vector3(maxX * fArray[0], -(maxY * fArray[1])); // Default values are inverted for y axis
 
-            //---Sending Data to Host----               >  IMPORTANT  <
-            // byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
-            // nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
+
+            //---Sending Data to Host----
+            if (quitApp)
+            {
+                myWriteBuffer = Encoding.ASCII.GetBytes("Stop");
+                nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
+            }
+
+            myWriteBuffer = Encoding.ASCII.GetBytes("Run");
+            nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
         }
     }
 
-    public static Vector3 StringToVector3(string sVector)
+    public static float[] StringToFloatArray(string sVector)
     {
+        float[] result;
+
         // Remove the parentheses
         if (sVector.StartsWith("(") && sVector.EndsWith(")"))
         {
             sVector = sVector.Substring(1, sVector.Length - 2);
         }
 
-        // split the items
         string[] sArray = sVector.Split(',');
 
-        // store as a Vector3
-        Vector3 result = new Vector3(
-            float.Parse(sArray[0]),
-            float.Parse(sArray[1]),
-            float.Parse(sArray[2]));
+        // store as a Float array
+        if (sVector != null)
+        {
+            result = new float[]
+            {
+                float.Parse(sArray[0]),
+                float.Parse(sArray[1]),
+                float.Parse(sArray[2])
+            };
+            return result;
+        }
 
-        return result;
+        return new float[] { 0, 0, 0 };
     }
 }
