@@ -29,7 +29,6 @@ public class TPScript : MonoBehaviour
         timeBeforeChange = Random.Range(0.5f, 2f);
 
         playerBounds = FindObjectOfType<GameManager>().screenBounds;
-        Debug.Log(playerBounds);
 
         minX = -(playerBounds.x - objectWidth);
         maxX = playerBounds.x - objectWidth;
@@ -57,8 +56,11 @@ public class TPScript : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        else
+        {
+            Debug.Log("enemy collision");
+        }
     }
-
 
     void ShiftPos()
     {
@@ -66,14 +68,11 @@ public class TPScript : MonoBehaviour
 
         if (Physics2D.OverlapBox(boxPos, new Vector2(1, 1), 0) != null)
         {
-            Debug.Log("Recursive");
             ShiftPos();
         }
 
         transform.position = boxPos;
 
-
         timeBeforeChange = Random.Range(0.5f, 2f);
-
     }
 }
