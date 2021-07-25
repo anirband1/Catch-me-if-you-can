@@ -32,6 +32,9 @@ sPosVector = "0,0,0"
 
 while True:
 
+    if quitApp:
+        break
+
     time.sleep(0.0166)
 
     success, frame = cap.read()
@@ -69,7 +72,7 @@ while True:
         #receiveing data in Byte fron C#, and converting it to String
         receivedData = sock.recv(1024).decode("UTF-8")
         if receivedData == "Stop":
-            break
+            quitApp = True
 
     cv.imshow("video", frame)
 
