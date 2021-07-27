@@ -27,7 +27,7 @@ public class PlayerScript : MonoBehaviour
         objectWidth = GetComponent<SpriteRenderer>().size.x;
         objectHeight = GetComponent<SpriteRenderer>().size.y;
 
-        playerBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+        playerBounds = FindObjectOfType<GameManager>().screenBounds;
 
         maxX = playerBounds.x - objectWidth;
         maxY = playerBounds.y - objectHeight;
@@ -86,6 +86,8 @@ public class PlayerScript : MonoBehaviour
         {
             //---Using received data---
             fArray = StringToFloatArray(dataReceived); //<-- assigning receivedPos value from Python
+
+            // Mapping received coords to screen
             receivedPos = new Vector3(maxX * fArray[0], -(maxY * fArray[1])); // Default values are inverted for y axis
 
 
@@ -96,6 +98,7 @@ public class PlayerScript : MonoBehaviour
                 nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
             }
 
+            // Anything except 'Stop' and python keeps running
             myWriteBuffer = Encoding.ASCII.GetBytes("Run");
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
         }

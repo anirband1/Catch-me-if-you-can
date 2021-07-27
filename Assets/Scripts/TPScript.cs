@@ -5,36 +5,26 @@ public class TPScript : MonoBehaviour
 
     Vector2 boxPos;
     Vector2 playerBounds;
-    [SerializeField] GameObject player;
 
     float timer, timeBeforeChange;
 
-    float objectWidth, objectHeight, playerWidth, playerHeight;
+    float objectWidth, objectHeight;
 
-    float minX, minY, maxX, maxY;
+    float rightX, topY;
 
 
 
     void Start()
     {
-
-        // Shift screen bounds code to GameManager
-
         objectWidth = GetComponent<SpriteRenderer>().size.x;
         objectHeight = GetComponent<SpriteRenderer>().size.y;
 
-        playerWidth = player.GetComponent<SpriteRenderer>().size.x;
-        playerWidth = player.GetComponent<SpriteRenderer>().size.y;
-
-        timeBeforeChange = Random.Range(0.5f, 2f);
+        timeBeforeChange = Random.Range(0.5f, 0.6f);
 
         playerBounds = FindObjectOfType<GameManager>().screenBounds;
-        Debug.Log(playerBounds);
 
-        minX = -(playerBounds.x - objectWidth);
-        maxX = playerBounds.x - objectWidth;
-        minY = -(playerBounds.y - objectHeight);
-        maxY = playerBounds.y - objectHeight;
+        rightX = playerBounds.x - objectWidth;
+        topY = playerBounds.y - objectHeight; // by 2
 
         ShiftPos();
     }
@@ -59,21 +49,17 @@ public class TPScript : MonoBehaviour
         }
     }
 
-
     void ShiftPos()
     {
-        boxPos = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
+        boxPos = new Vector2(Random.Range(-rightX, rightX), Random.Range(-topY, topY));
 
-        if (Physics2D.OverlapBox(boxPos, new Vector2(1, 1), 0) != null)
+        if (Physics2D.OverlapBox(boxPos, new Vector2(objectWidth, objectHeight), 0) != null)
         {
-            Debug.Log("Recursive");
             ShiftPos();
         }
 
         transform.position = boxPos;
 
-
-        timeBeforeChange = Random.Range(0.5f, 2f);
-
+        timeBeforeChange = Random.Range(0.5f, 0.6f); // Change max to 2f
     }
 }
