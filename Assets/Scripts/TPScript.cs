@@ -19,7 +19,7 @@ public class TPScript : MonoBehaviour
         objectWidth = GetComponent<SpriteRenderer>().size.x;
         objectHeight = GetComponent<SpriteRenderer>().size.y;
 
-        timeBeforeChange = Random.Range(0.5f, 0.6f);
+        timeBeforeChange = Random.Range(0.5f, 2f);
 
         playerBounds = FindObjectOfType<GameManager>().screenBounds;
 
