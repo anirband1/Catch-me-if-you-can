@@ -23,5 +23,5 @@ Once you have installed unitys proper version, and made sure your packages on py
 - Create an automator applcation based on unix executable in StreamingAssets folder
 - Name it App (with extension it should be App.app)
 - Making it anywhere doesn't matter.
-- Commands - get specified finder items
--          - open finder items
+- Commands i. get specified finder items
+-         ii. open finder items
