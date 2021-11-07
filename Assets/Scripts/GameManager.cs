@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.IO;
 using System.Diagnostics;
 
 public class GameManager : MonoBehaviour
@@ -7,6 +6,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] Camera mainCamera;
 
     [HideInInspector] public Vector2 screenBounds;
+
+    string appPath;
     void Awake()
     {
         screenBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
@@ -14,7 +15,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        string appPath = Directory.GetCurrentDirectory() + "/Hand_tracker.app";
+        appPath = Application.streamingAssetsPath + "/App.app"; // -- W A R N I N G -- check extension
 
         Process.Start(appPath);
     }
