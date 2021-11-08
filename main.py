@@ -40,6 +40,8 @@ while True:
     success, frame = cap.read()
     frame = cv.flip(frame, 1)
 
+    # key = cv.waitKey(1) & 0xFF  # Keyboard input
+
     frameRGB = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     #frameHeight, frameWidth, _ = frame.shape
     result = hands.process(frameRGB)
@@ -49,28 +51,29 @@ while True:
         for handLM in hand_land_mark:
             for id, lm in enumerate(handLM.landmark):
 
-                h, w, c = frame.shape
-                # cx, cy = int(lm.x * w), int(lm.y * h)
-
-                cx, cy = (lm.x), (lm.y)
-                # print(id, cx, cy)
-
                 if id == 8:
+
+                    h, w, c = frame.shape
+                    # cx, cy = int(lm.x * w), int(lm.y * h)
+
+                    cx, cy = (lm.x), (lm.y)
+                    # print(id, cx, cy)
 
                     cv.circle(frame, (int(cx * w), int(cy * h)), 25,
                               (255, 0, 255), -1)
 
-                    sPosVector = f"{1-((1-cx)*2)},{1-((1-cy)*2)},0"  # position of index finger (scaled to be from -1 to 1)
+                    sPosVector = f"{cx * 2 - 1},{cy * 2 - 1},0"  # position of index finger (scaled to be from -1 to 1)
 
             mpDraw.draw_landmarks(frame, handLM, mp_hands.HAND_CONNECTIONS)
 
-    #Converting string to Byte, and sending it to C#
+    # Converting string to Byte, and sending it to C#
 
     if not connectionRefused:
         sock.sendall(sPosVector.encode("UTF-8"))
 
         #receiveing data in Byte fron C#, and converting it to String
         receivedData = sock.recv(1024).decode("UTF-8")
+
         if receivedData == "Stop":
             quitApp = True
 
