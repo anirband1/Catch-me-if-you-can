@@ -7,15 +7,19 @@ import sys
 # c# communication requirements
 connectionRefused = True
 quitApp = False
+print("Python launched")
 
 try:
+    print("Entered try block")
     host, port = "localhost", 9999
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print("Initialized sock")
     sock.connect((host, port))
+    print("Connected to host at port")
     connectionRefused = False
     print("Connectcion Established")
 except (ConnectionRefusedError):
-    pass
+    print("Connection Refused")
 
 # hand detection
 cap = cv.VideoCapture(0)
@@ -30,6 +34,7 @@ hands = mp_hands.Hands(static_image_mode=False,
 
 sPosVector = "0,0,0"
 
+print("Starting main loop")
 while True:
 
     if quitApp:
@@ -70,7 +75,14 @@ while True:
         sock.sendall(sPosVector.encode("UTF-8"))
 
         #receiveing data in Byte fron C#, and converting it to String
+<<<<<<< Updated upstream
         receivedData = sock.recv(1024).decode("UTF-8")
+=======
+        receivedData = sock.recv(1024).decode(
+            "UTF-8"
+        )  # change 1024 to something lower hopefully makes things faster (128 ?)
+
+>>>>>>> Stashed changes
         if receivedData == "Stop":
             quitApp = True
 
