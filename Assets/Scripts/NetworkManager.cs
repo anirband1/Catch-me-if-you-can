@@ -57,7 +57,6 @@ public class NetworkManager : MonoBehaviour
 
         client = listener.AcceptTcpClient();
 
-        running = true;
         while (running)
         {
             SendAndReceiveData();
@@ -131,3 +130,4 @@ public class NetworkManager : MonoBehaviour
 
 // nwStream.close();
 // client.close();
+

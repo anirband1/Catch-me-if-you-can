@@ -2,7 +2,6 @@
 
 public class TPScript : MonoBehaviour
 {
-
     Vector2 boxPos;
     Vector2 playerBounds;
 
@@ -11,7 +10,6 @@ public class TPScript : MonoBehaviour
     float objectWidth, objectHeight;
 
     float rightX, topY;
-
 
 
     void Start()
@@ -40,6 +38,8 @@ public class TPScript : MonoBehaviour
 
         timer += Time.deltaTime;
     }
+
+    // OnTrigger ?
 
     void OnCollisionEnter2D(Collision2D other)
     {

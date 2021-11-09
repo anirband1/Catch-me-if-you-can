@@ -17,6 +17,6 @@ public class GameManager : MonoBehaviour
     {
         appPath = Application.streamingAssetsPath + "/App.app"; // -- W A R N I N G -- check extension
 
-        Process.Start(appPath);
+        // Process.Start(appPath);
     }
 }
