@@ -1,5 +1,12 @@
-import cv2 as cv
-import mediapipe as mp
+print("importing videocapture")
+from cv2 import VideoCapture  # Takes time to import
+
+from cv2 import flip, cvtColor, COLOR_BGR2RGB, circle, imshow, waitKey
+
+print("importing mediapipe")
+import mediapipe.python.solutions.hands as hands_solution
+import mediapipe.python.solutions.drawing_utils as mp_draw_utils
+
 import time
 import socket
 import sys
@@ -7,25 +14,20 @@ import sys
 # c# communication requirements
 connectionRefused = True
 quitApp = False
-print("Python launched")
 
 try:
-    print("Entered try block")
     host, port = "localhost", 9999
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    print("Initialized sock")
     sock.connect((host, port))
-    print("Connected to host at port")
     connectionRefused = False
-    print("Connectcion Established")
 except (ConnectionRefusedError):
-    print("Connection Refused")
+    pass
 
 # hand detection
-cap = cv.VideoCapture(0)
+cap = VideoCapture(0)  # cv here
 
-mp_hands = mp.solutions.hands
-mpDraw = mp.solutions.drawing_utils
+mp_hands = hands_solution
+mp_draw = mp_draw_utils
 
 hands = mp_hands.Hands(static_image_mode=False,
                        max_num_hands=2,
@@ -34,20 +36,19 @@ hands = mp_hands.Hands(static_image_mode=False,
 
 sPosVector = "0,0,0"
 
-print("Starting main loop")
 while True:
 
     if quitApp:
         break
 
-    time.sleep(1 / 60)
+    time.sleep(1 / 60)  # Rough value of Time.deltaTime in unity
 
     success, frame = cap.read()
-    frame = cv.flip(frame, 1)
+    frame = flip(frame, 1)  # cv here
 
     # key = cv.waitKey(1) & 0xFF  # Keyboard input
 
-    frameRGB = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+    frameRGB = cvtColor(frame, COLOR_BGR2RGB)  # cv here
     #frameHeight, frameWidth, _ = frame.shape
     result = hands.process(frameRGB)
     hand_land_mark = result.multi_hand_landmarks  # hand land marks
@@ -56,7 +57,7 @@ while True:
         for handLM in hand_land_mark:
             for id, lm in enumerate(handLM.landmark):
 
-                if id == 8:
+                if id == 8:  # index finger
 
                     h, w, c = frame.shape
                     # cx, cy = int(lm.x * w), int(lm.y * h)
@@ -64,12 +65,12 @@ while True:
                     cx, cy = (lm.x), (lm.y)
                     # print(id, cx, cy)
 
-                    cv.circle(frame, (int(cx * w), int(cy * h)), 25,
-                              (255, 0, 255), -1)
+                    circle(frame, (int(cx * w), int(cy * h)), 25,
+                           (255, 0, 255), -1)
 
                     sPosVector = f"{2 * cx - 1},{2 * cy - 1},0"  # position of index finger (scaled to be from -1 to 1)
 
-            mpDraw.draw_landmarks(frame, handLM, mp_hands.HAND_CONNECTIONS)
+            mp_draw.draw_landmarks(frame, handLM, mp_hands.HAND_CONNECTIONS)
 
     # Converting string to Byte, and sending it to C#
 
@@ -84,8 +85,10 @@ while True:
         if receivedData == "Stop":
             quitApp = True
 
-    cv.imshow("video", frame)
+    imshow("video", frame)
 
-    cv.waitKey(1)
+    waitKey(1)
 
 sys.exit()
+
+# put connect block in func, every x milliseconds, call func until connects ?w
