@@ -89,6 +89,10 @@ while True:
 
     waitKey(1)
 
+sock.close()
 sys.exit()
 
-# put connect block in func, every x milliseconds, call func until connects ?w
+# put connect block in func, every x milliseconds, call func until connects ?
+
+# with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+#     sock.connect((host, port))
