@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
 using System.Diagnostics;
-<<<<<<< Updated upstream
-=======
 using System.Collections;
 using System;
->>>>>>> Stashed changes
 
 public class GameManager : MonoBehaviour
 {
@@ -22,11 +19,6 @@ public class GameManager : MonoBehaviour
     {
         appPath = Application.streamingAssetsPath + "/App.app"; // -- W A R N I N G -- check extension
 
-<<<<<<< Updated upstream
-        // Process.Start(appPath);
-    }
-}
-=======
         // execPath = ExecuteBashCommand("./main.py");
         // StartCoroutine(BashMethodOne("main.py"));
         BashMethodOne();
@@ -183,4 +175,3 @@ For any unlisted platform, run the example script on the target platform to find
         yield return null;
     }
 */
->>>>>>> Stashed changes
