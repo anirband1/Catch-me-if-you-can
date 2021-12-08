@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Diagnostics;
+using System.Collections;
 using System;
+using UnityEditor.Scripting.Python;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,15 +20,18 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        appPath = Application.streamingAssetsPath + "/App.app"; // -- W A R N I N G -- check extension
+        // appPath = Application.streamingAssetsPath + "/App.app"; // -- W A R N I N G -- check extension
 
-        execPath = ExecuteBashCommand("echo $PWD");
+        // execPath = ExecuteBashCommand("echo $PWD");
 
-        UnityEngine.Debug.Log(execPath);
+        // UnityEngine.Debug.Log(execPath);
 
-        FindObjectOfType<Path>().gmPath = execPath;
-        FindObjectOfType<Path>().changed = true;
+        // FindObjectOfType<Path>().gmPath = execPath;
+        // FindObjectOfType<Path>().changed = true;
         // Process.Start(appPath);
+
+        // StartCoroutine(RunPythonOnce());
+        PythonRunner.RunFile($"{Application.streamingAssetsPath}/main.py");
     }
 
     /*
@@ -65,6 +70,13 @@ public class GameManager : MonoBehaviour
 
         return proc.StandardOutput.ReadToEnd();
     }
+
+    // IEnumerator RunPythonOnce()
+    // {
+    //     PythonRunner.RunFile($"{Application.streamingAssetsPath}/main.py");
+    //     StopCoroutine(RunPythonOnce());
+    //     yield return null;
+    // }
 }
 
 
