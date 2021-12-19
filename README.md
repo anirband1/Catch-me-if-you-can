@@ -25,3 +25,8 @@ Once you have installed unitys proper version, and made sure your packages on py
 - Making it anywhere doesn't matter.
 - Autoamtor cmds get specified finder items
 - open finder items
+
+OR
+
+- Install python 3.5 or higher from https://www.python.org/downloads/
+- Recommended install: 3.9.x
