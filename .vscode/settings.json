@@ -51,7 +51,6 @@
         "Obj/":true,
         "ProjectSettings/":true,
         "temp/":true,
-        "Temp/":true,
-        "lol":false
+        "Temp/":true
     }
 }
