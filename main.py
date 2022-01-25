@@ -1,12 +1,13 @@
 print("importing videocapture")
 from cv2 import VideoCapture  # Takes time to import
-
-from cv2 import flip, cvtColor, COLOR_BGR2RGB, circle, imshow, waitKey
+print("Importing important cv functions ")
+from cv2 import flip, cvtColor, COLOR_BGR2RGB, circle, imshow, waitKey, putText, FONT_HERSHEY_COMPLEX, waitKey 
 
 print("importing mediapipe")
 import mediapipe.python.solutions.hands as hands_solution
 import mediapipe.python.solutions.drawing_utils as mp_draw_utils
 
+print("Importing other stuff...")
 import time
 import socket
 import sys
@@ -36,7 +37,13 @@ hands = mp_hands.Hands(static_image_mode=False,
 
 sPosVector = "0,0,0"
 
-while True:
+
+start_time = 0 
+fps = 0 
+
+
+run = True 
+while run:
 
     if quitApp:
         break
@@ -47,11 +54,22 @@ while True:
     frame = flip(frame, 1)  # cv here
 
     # key = cv.waitKey(1) & 0xFF  # Keyboard input
+    end_time = time.time()
+    delta_time = end_time - start_time
+    fps = 1/delta_time
+    start_time = end_time
+
+    putText(frame, f"FPS: {int(fps)}", (5,30), FONT_HERSHEY_COMPLEX, 1, (255,255,255))
 
     frameRGB = cvtColor(frame, COLOR_BGR2RGB)  # cv here
     #frameHeight, frameWidth, _ = frame.shape
     result = hands.process(frameRGB)
     hand_land_mark = result.multi_hand_landmarks  # hand land marks
+
+    #lets user quit from cv window 
+    if waitKey(1) & 0xFF == ord('q'):
+        print("Quitting...")
+        run = False 
 
     if hand_land_mark:  # hand on screen
         for handLM in hand_land_mark:
@@ -73,7 +91,7 @@ while True:
             mp_draw.draw_landmarks(frame, handLM, mp_hands.HAND_CONNECTIONS)
 
     # Converting string to Byte, and sending it to C#
-
+        #testing
     if not connectionRefused:
         sock.sendall(sPosVector.encode("UTF-8"))
 
